@@ -14,34 +14,10 @@ app.get('/', (req, res) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Touch Typist</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
     <div id="root"></div>
-    <script type="text/babel">
-        const { useState } = React;
-
-        function HelloWorld() {
-            return (
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh',
-                    fontFamily: 'Arial, sans-serif',
-                    fontSize: '2rem',
-                    color: '#333'
-                }}>
-                    <h1>Hello World!</h1>
-                </div>
-            );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<HelloWorld />);
-    </script>
+    <script src="/bundle.js"></script>
 </body>
 </html>
   `);
