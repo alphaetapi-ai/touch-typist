@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { KeyboardGrid } from './KeyboardGrid';
 import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
-import { getDefaultKeyboardLayout } from '../utils/keyboardLayouts';
+import { getDefaultKeyboardLayout, keyLevels } from '../utils/keyboardLayouts';
 
 interface TouchTypistProps {}
 
@@ -21,31 +21,65 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     pending: []
   });
   const [highlightedKey, setHighlightedKey] = useState<string>("");
+  const [level, setLevel] = useState<number>(4);
 
   const generateRandomWord = (): string => {
     const keyboardLayout = getDefaultKeyboardLayout();
-    const thirdRow = keyboardLayout[2]; // Third row (index 2)
 
-    // Extract valid characters from third row, excluding empty spaces
-    const characters: string[] = [];
-    thirdRow.forEach(key => {
-      if (key !== "  ") {
-        // For keys with two characters, use both
-        if (key.length === 2) {
-          characters.push(key[0].toLowerCase());
-          characters.push(key[1].toLowerCase());
-        } else {
-          characters.push(key.toLowerCase());
+    // Get all available characters for current level and below
+    const availableCharacters: string[] = [];
+    const currentLevelCharacters: string[] = [];
+
+    for (let row = 0; row < keyLevels.length; row++) {
+      for (let col = 0; col < keyLevels[row].length; col++) {
+        const keyLevel = keyLevels[row][col];
+        const keyData = keyboardLayout[row][col];
+
+        if (keyLevel > 0 && keyLevel <= level && keyData && keyData !== "  ") {
+          // Extract characters from key
+          if (keyData.length === 2) {
+            const char1 = keyData[0].toLowerCase();
+            const char2 = keyData[1].toLowerCase();
+
+            availableCharacters.push(char1, char2);
+
+            // If this key is exactly at current level, add to current level pool
+            if (keyLevel === level) {
+              currentLevelCharacters.push(char1, char2);
+            }
+          } else {
+            const char = keyData.toLowerCase();
+            availableCharacters.push(char);
+
+            if (keyLevel === level) {
+              currentLevelCharacters.push(char);
+            }
+          }
         }
       }
-    });
-
-    // Generate 5-character word
-    let word = "";
-    for (let i = 0; i < 5; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      word += characters[randomIndex];
     }
+
+    // Generate words until we get one with at least one current level character
+    let word: string;
+    let hasCurrentLevelChar: boolean;
+
+    do {
+      word = "";
+      hasCurrentLevelChar = false;
+
+      // Generate 5-character word from available characters
+      for (let i = 0; i < 5; i++) {
+        const randomIndex = Math.floor(Math.random() * availableCharacters.length);
+        const char = availableCharacters[randomIndex];
+        word += char;
+
+        // Check if this character is from current level
+        if (currentLevelCharacters.includes(char)) {
+          hasCurrentLevelChar = true;
+        }
+      }
+    } while (!hasCurrentLevelChar && currentLevelCharacters.length > 0);
+
     return word;
   };
 
@@ -118,6 +152,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   return (
     <div className="app-container">
+      <div className="level-display">Level: {level}</div>
       <PendingWords wordsState={wordsState} />
 
       <TypingBox
@@ -126,7 +161,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         onHighlightChange={setHighlightedKey}
       />
 
-      <KeyboardGrid highlightedKey={highlightedKey} />
+      <KeyboardGrid highlightedKey={highlightedKey} currentLevel={level} />
     </div>
   );
 };

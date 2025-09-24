@@ -1,11 +1,12 @@
 import React from 'react';
-import { getDefaultKeyboardLayout } from '../utils/keyboardLayouts';
+import { getDefaultKeyboardLayout, keyLevels } from '../utils/keyboardLayouts';
 
 interface KeyboardGridProps {
   highlightedKey?: string;
+  currentLevel?: number;
 }
 
-export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" }) => {
+export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "", currentLevel = 1 }) => {
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
     const homeKeyPositions = [1, 2, 3, 4, 7, 8, 9, 10];
@@ -25,9 +26,11 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" 
 
         // Get key data first
         const keyData = keyboardLayout[row][col];
+        const keyLevel = keyLevels[row][col];
 
         let cellClass = "keyboard-grid-cell";
         if (isHomeKey) cellClass += " keyboard-grid-home-key";
+        if (keyLevel > 0 && keyLevel <= currentLevel) cellClass += " keyboard-grid-active-key";
         if (row === 0 && isLastCell) cellClass += " keyboard-grid-backspace";
         if (row === 2 && isLastCell) cellClass += " keyboard-grid-return";
 

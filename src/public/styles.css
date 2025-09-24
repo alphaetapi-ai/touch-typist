@@ -21,6 +21,13 @@ body {
   gap: 20px;
 }
 
+.level-display {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
 /* PendingWords Component */
 .pending-words-container {
   flex: 1;
