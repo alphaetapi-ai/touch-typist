@@ -46,6 +46,9 @@ export const TypingBox: React.FC<TypingBoxProps> = ({
         const wasMatch = onWordSubmit(trimmedInput);
         if (wasMatch) {
           setTextInput('');
+        } else if (e.key === ' ') {
+          // If word didn't match and it was a space, add the space to the input
+          setTextInput(textInput + ' ');
         }
       }
     }
