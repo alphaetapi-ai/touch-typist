@@ -1,34 +1,28 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
-interface PendingWordsProps {
-  words: string[];
-  onWordsGenerated: (words: string[]) => void;
-  generateRandomWord: () => string;
+interface WordsState {
+  typed: string;
+  current: string;
+  remainder: string;
+  pending: string[];
 }
 
-export const PendingWords: React.FC<PendingWordsProps> = ({
-  words,
-  onWordsGenerated,
-  generateRandomWord
-}) => {
-  const generateInitialWords = (): void => {
-    const newWords: string[] = [];
-    for (let i = 0; i < 6; i++) {
-      newWords.push(generateRandomWord());
-    }
-    onWordsGenerated(newWords);
-  };
+interface PendingWordsProps {
+  wordsState: WordsState;
+}
 
-  useEffect(() => {
-    if (words.length === 0) {
-      generateInitialWords();
-    }
-  }, []);
-
+export const PendingWords: React.FC<PendingWordsProps> = ({ wordsState }) => {
   return (
     <div className="pending-words-container">
-      {words.map((word, index) => (
-        <p key={index}>{word}</p>
+      <p>
+        <span>{wordsState.typed}</span>
+        {wordsState.typed && ' '}
+        <span>{wordsState.current}</span>
+        {wordsState.remainder && ' '}
+        <span>{wordsState.remainder}</span>
+      </p>
+      {wordsState.pending.map((phrase, index) => (
+        <p key={index}>{phrase}</p>
       ))}
     </div>
   );
