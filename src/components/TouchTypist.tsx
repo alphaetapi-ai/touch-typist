@@ -21,7 +21,9 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     pending: []
   });
   const [highlightedKey, setHighlightedKey] = useState<string>("");
-  const [level, setLevel] = useState<number>(4);
+  const [level, setLevel] = useState<number>(1);
+  const [speed, setSpeed] = useState<number>(10);
+  const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
 
   const generateRandomWord = (): string => {
     const keyboardLayout = getDefaultKeyboardLayout();
@@ -93,7 +95,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   const initializeWordsState = (): void => {
     const pending: string[] = [];
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 1; i++) {
       pending.push(generatePhrase());
     }
 
@@ -108,10 +110,24 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
       remainder,
       pending
     });
+    setWordStartTime(Date.now());
   };
 
   const handleWordMatch = (typedWord: string): boolean => {
     if (typedWord.toLowerCase() === wordsState.current.toLowerCase()) {
+      // Calculate time for this word
+      const wordTime = (Date.now() - wordStartTime) / 1000; // Convert to seconds
+      const cappedWordTime = Math.min(wordTime, 10); // Cap at 10 seconds
+
+      // Update speed using weighted average
+      const newSpeed = speed * 0.9 + cappedWordTime * 0.1;
+      setSpeed(newSpeed);
+
+      // Check for level progression
+      if (newSpeed < 5 && level < 24) {
+        setLevel(level + 1);
+        setSpeed(10); // Reset speed to 10 seconds
+      }
       const newTyped = wordsState.typed ? `${wordsState.typed} ${wordsState.current}` : wordsState.current;
 
       if (wordsState.remainder) {
@@ -126,6 +142,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
           current: newCurrent,
           remainder: newRemainder
         });
+        setWordStartTime(Date.now());
       } else if (wordsState.pending.length > 0) {
         // Move first phrase from pending to remainder/current
         const firstPhrase = wordsState.pending[0];
@@ -140,6 +157,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
           remainder: newRemainder,
           pending: newPending
         });
+        setWordStartTime(Date.now());
       }
       return true; // Match found
     }
@@ -152,7 +170,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   return (
     <div className="app-container">
-      <div className="level-display">Level: {level}</div>
+      <div className="level-display">Level: {level} | Speed: {(60 / speed).toFixed(1)} WPM</div>
       <PendingWords wordsState={wordsState} />
 
       <TypingBox
