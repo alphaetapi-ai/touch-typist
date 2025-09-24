@@ -48,12 +48,12 @@ body {
   border-radius: 4px;
 }
 
-/* Bottom Area */
-.bottom-area {
+/* KeyboardGrid Component */
+.keyboard-grid-container {
   flex: 0 0 auto;
 }
 
-.letter-grid {
+.keyboard-grid {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -63,29 +63,29 @@ body {
   margin: 0 auto;
 }
 
-.grid-row {
+.keyboard-grid-row {
   display: flex;
   gap: 2px;
   flex-wrap: nowrap;
 }
 
-.grid-row-0 {
+.keyboard-grid-row-0 {
   margin-left: 0;
 }
 
-.grid-row-1 {
+.keyboard-grid-row-1 {
   margin-left: calc(40px / 3 + 40px);
 }
 
-.grid-row-2 {
+.keyboard-grid-row-2 {
   margin-left: calc(40px * 2 / 3 + 40px);
 }
 
-.grid-row-3 {
+.keyboard-grid-row-3 {
   margin-left: calc(40px + 40px);
 }
 
-.grid-cell {
+.keyboard-grid-cell {
   width: 40px;
   height: 40px;
   border: 1px solid #333;
@@ -99,14 +99,14 @@ body {
   flex-shrink: 0;
 }
 
-.grid-cell.active-key {
+.keyboard-grid-cell.keyboard-grid-active-key {
   background-color: white;
 }
 
-.grid-cell.grid-backspace {
+.keyboard-grid-cell.keyboard-grid-backspace {
   width: calc(40px + 40px / 3);
 }
 
-.grid-cell.grid-return {
+.keyboard-grid-cell.keyboard-grid-return {
   width: calc(40px + 40px * 2 / 3);
 }
