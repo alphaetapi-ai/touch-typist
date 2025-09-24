@@ -27,15 +27,20 @@ body {
   border: 1px solid #ccc;
   padding: 20px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .pending-words-container p {
-  margin: 10px 0;
+  margin: 0;
   font-size: 2rem;
+  line-height: 1.1;
 }
 
 .pending-words-typed {
-  color: #666;
+  color: #999;
 }
 
 .pending-words-current {
@@ -50,11 +55,13 @@ body {
 .typing-box-container {
   flex: 0 0 auto;
   padding: 10px 0;
+  display: flex;
+  justify-content: center;
 }
 
 .typing-box-input {
-  width: 100%;
-  padding: 10px;
+  width: 300px;
+  padding: 8px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
