@@ -8,7 +8,7 @@
     "segment": "./dist/cli/segment.js"
   },
   "scripts": {
-    "build": "tsc && webpack --mode production",
+    "build": "tsc && webpack --mode production && cp -r src/public/* dist/public/",
     "build:server": "tsc",
     "build:client": "webpack --mode production",
     "build:dev": "webpack --mode development",

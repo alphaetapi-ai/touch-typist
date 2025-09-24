@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { HelloWorld } from './components/HelloWorld';
+import { TouchTypist } from './components/TouchTypist';
 
 const App: React.FC = () => {
-  return <HelloWorld />;
+  return <TouchTypist />;
 };
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
