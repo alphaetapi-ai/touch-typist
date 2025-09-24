@@ -7,11 +7,16 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
+    const activePositions = [1, 2, 3, 4, 7, 8, 9, 10];
+
     for (let row: number = 0; row < 4; row++) {
       const cells: React.JSX.Element[] = [];
       for (let col: number = 0; col < 15; col++) {
+        const isActiveKey = row === 2 && activePositions.includes(col);
+        const cellClass = isActiveKey ? "grid-cell active-key" : "grid-cell";
+
         cells.push(
-          <div key={`${row}-${col}`} className="grid-cell">
+          <div key={`${row}-${col}`} className={cellClass}>
             {String.fromCharCode(65 + (row * 15 + col) % 26)}
           </div>
         );

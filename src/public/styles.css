@@ -9,6 +9,7 @@
 body {
   font-family: Arial, sans-serif;
   color: #333;
+  background-color: #d8d8d8;
 }
 
 /* App Layout */
@@ -56,6 +57,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  align-items: center;
 }
 
 .grid-row {
@@ -69,15 +71,15 @@ body {
 }
 
 .grid-row-1 {
-  margin-left: calc(40px / 3);
-}
-
-.grid-row-2 {
   margin-left: calc(40px * 2 / 3);
 }
 
+.grid-row-2 {
+  margin-left: calc(40px * 4 / 3);
+}
+
 .grid-row-3 {
-  margin-left: 40px;
+  margin-left: calc(40px * 2);
 }
 
 .grid-cell {
@@ -87,9 +89,13 @@ body {
   display: flex !important;
   align-items: center;
   justify-content: center;
-  background-color: #f9f9f9;
+  background-color: #c0c0c0;
   font-family: monospace;
   font-size: 14px;
   font-weight: bold;
   flex-shrink: 0;
+}
+
+.grid-cell.active-key {
+  background-color: white;
 }
