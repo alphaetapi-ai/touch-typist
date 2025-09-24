@@ -1,4 +1,5 @@
 import React from 'react';
+import { getDefaultKeyboardLayout } from '../utils/keyboardLayouts';
 
 interface KeyboardGridProps {}
 
@@ -8,13 +9,8 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
     const activePositions = [1, 2, 3, 4, 7, 8, 9, 10];
     const rowEndCols = [14, 14, 13, 11]; // Row 0: 14 (0-13), Row 1: 13 (1-13), Row 2: 12 (1-12), Row 3: 10 (1-10)
 
-    // Dvorak keyboard layout data
-    const keyboardLayout = [
-      ["`~", "1!", "2@", "3#", "4$", "5%", "6^", "7&", "8*", "9(", "0)", "[{", "]}"],
-      ["  ", "'\"", ",<", ".>", "pP", "yY", "fF", "gG", "cC", "rR", "lL", "/?", "=+", "\\|"],
-      ["  ", "aA", "oO", "eE", "uU", "iI", "dD", "hH", "tT", "nN", "sS", "-_"],
-      ["  ", ";:", "qQ", "jJ", "kK", "xX", "bB", "mM", "wW", "vV", "zZ"]
-    ];
+    // Get keyboard layout data
+    const keyboardLayout = getDefaultKeyboardLayout();
 
     for (let row: number = 0; row < 4; row++) {
       const cells: React.JSX.Element[] = [];
