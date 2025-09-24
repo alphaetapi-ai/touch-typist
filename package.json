@@ -4,7 +4,8 @@
   "description": "TypeScript project with Node.js server, React frontend, and CLI tools",
   "main": "dist/server.js",
   "bin": {
-    "hello": "./dist/cli/hello.js"
+    "hello": "./dist/cli/hello.js",
+    "segment": "./dist/cli/segment.js"
   },
   "scripts": {
     "build": "tsc && webpack --mode production",
