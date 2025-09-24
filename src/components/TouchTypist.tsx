@@ -24,6 +24,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   const [level, setLevel] = useState<number>(1);
   const [speed, setSpeed] = useState<number>(10);
   const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
+  const [shiftMode, setShiftMode] = useState<boolean>(false);
 
   const generateRandomWord = (): string => {
     const keyboardLayout = getDefaultKeyboardLayout();
@@ -43,11 +44,18 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
             const char1 = keyData[0].toLowerCase();
             const char2 = keyData[1].toLowerCase();
 
-            availableCharacters.push(char1, char2);
-
-            // If this key is exactly at current level, add to current level pool
-            if (keyLevel === level) {
-              currentLevelCharacters.push(char1, char2);
+            if (shiftMode) {
+              // Use both characters when shift mode is on
+              availableCharacters.push(char1, char2);
+              if (keyLevel === level) {
+                currentLevelCharacters.push(char1, char2);
+              }
+            } else {
+              // Only use first character (unshifted) when shift mode is off
+              availableCharacters.push(char1);
+              if (keyLevel === level) {
+                currentLevelCharacters.push(char1);
+              }
             }
           } else {
             const char = keyData.toLowerCase();
@@ -91,6 +99,19 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
       words.push(generateRandomWord());
     }
     return words.join(' ');
+  };
+
+  const handleLevelChange = (newLevel: number): void => {
+    if (newLevel >= 1 && newLevel <= 25) {
+      setLevel(newLevel);
+      setSpeed(10); // Reset speed to 10 seconds
+      initializeWordsState();
+    }
+  };
+
+  const handleShiftChange = (newShiftMode: boolean): void => {
+    setShiftMode(newShiftMode);
+    initializeWordsState();
   };
 
   const initializeWordsState = (): void => {
@@ -171,6 +192,28 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   return (
     <div className="app-container">
       <div className="level-display">Level: {level} | Speed: {(60 / speed).toFixed(1)} WPM</div>
+      <div className="controls">
+        <button
+          onClick={() => handleLevelChange(level - 1)}
+          disabled={level <= 1}
+        >
+          -1
+        </button>
+        <button
+          onClick={() => handleLevelChange(level + 1)}
+          disabled={level >= 25}
+        >
+          +1
+        </button>
+        <label>
+          <input
+            type="checkbox"
+            checked={shiftMode}
+            onChange={(e) => handleShiftChange(e.target.checked)}
+          />
+          Shift?
+        </label>
+      </div>
       <PendingWords wordsState={wordsState} />
 
       <TypingBox
