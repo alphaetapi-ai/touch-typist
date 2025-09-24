@@ -124,7 +124,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
       setSpeed(newSpeed);
 
       // Check for level progression
-      if (newSpeed < 5 && level < 24) {
+      if (newSpeed < 5 && level < 25) {
         setLevel(level + 1);
         setSpeed(10); // Reset speed to 10 seconds
       }
