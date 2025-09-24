@@ -15,11 +15,11 @@ export const PendingWords: React.FC<PendingWordsProps> = ({ wordsState }) => {
   return (
     <div className="pending-words-container">
       <p>
-        <span>{wordsState.typed}</span>
+        <span className="pending-words-typed">{wordsState.typed}</span>
         {wordsState.typed && ' '}
-        <span>{wordsState.current}</span>
+        <span className="pending-words-current">{wordsState.current}</span>
         {wordsState.remainder && ' '}
-        <span>{wordsState.remainder}</span>
+        <span className="pending-words-remainder">{wordsState.remainder}</span>
       </p>
       {wordsState.pending.map((phrase, index) => (
         <p key={index}>{phrase}</p>

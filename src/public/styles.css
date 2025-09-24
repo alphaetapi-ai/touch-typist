@@ -31,7 +31,19 @@ body {
 
 .pending-words-container p {
   margin: 10px 0;
-  font-size: 1rem;
+  font-size: 2rem;
+}
+
+.pending-words-typed {
+  color: #666;
+}
+
+.pending-words-current {
+  color: #0066cc;
+}
+
+.pending-words-remainder {
+  color: #333;
 }
 
 /* TypingBox Component */
