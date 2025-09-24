@@ -10,6 +10,14 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     const activePositions = [1, 2, 3, 4, 7, 8, 9, 10];
     const rowEndCols = [14, 14, 13, 11]; // Row 0: 14 (0-13), Row 1: 13 (1-13), Row 2: 12 (1-12), Row 3: 10 (1-10)
 
+    // Dvorak keyboard layout data
+    const keyboardLayout = [
+      ["`~", "1!", "2@", "3#", "4$", "5%", "6^", "7&", "8*", "9(", "0)", "[{", "]}"],
+      ["  ", "'\"", ",<", ".>", "pP", "yY", "fF", "gG", "cC", "rR", "lL", "/?", "=+", "\\|"],
+      ["  ", "aA", "oO", "eE", "uU", "iI", "dD", "hH", "tT", "nN", "sS", "-_"],
+      ["  ", ";:", "qQ", "jJ", "kK", "xX", "bB", "mM", "wW", "vV", "zZ"]
+    ];
+
     for (let row: number = 0; row < 4; row++) {
       const cells: React.JSX.Element[] = [];
       const startCol = row === 0 ? 0 : 1;
@@ -30,7 +38,21 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         } else if (row === 2 && isLastCell) {
           cellContent = "Ret";
         } else {
-          cellContent = String.fromCharCode(65 + (row * 15 + col) % 26);
+          const keyData = keyboardLayout[row][col];
+          if (keyData === "  ") {
+            cellContent = "";
+          } else if (keyData.length === 2) {
+            const char1 = keyData[0];
+            const char2 = keyData[1];
+            // If both characters are letters and one is uppercase version of the other
+            if (char1.toLowerCase() === char2.toLowerCase() && char1 !== char2) {
+              cellContent = char1.toUpperCase();
+            } else {
+              cellContent = keyData;
+            }
+          } else {
+            cellContent = keyData;
+          }
         }
 
         cells.push(
