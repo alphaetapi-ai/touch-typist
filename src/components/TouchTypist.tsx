@@ -17,11 +17,25 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
       for (let col: number = startCol; col < endCol; col++) {
         const isActiveKey = row === 2 && activePositions.includes(col);
-        const cellClass = isActiveKey ? "grid-cell active-key" : "grid-cell";
+        const isLastCell = col === endCol - 1;
+
+        let cellClass = "grid-cell";
+        if (isActiveKey) cellClass += " active-key";
+        if (row === 0 && isLastCell) cellClass += " grid-backspace";
+        if (row === 2 && isLastCell) cellClass += " grid-return";
+
+        let cellContent: string;
+        if (row === 0 && isLastCell) {
+          cellContent = "BSp";
+        } else if (row === 2 && isLastCell) {
+          cellContent = "Ret";
+        } else {
+          cellContent = String.fromCharCode(65 + (row * 15 + col) % 26);
+        }
 
         cells.push(
           <div key={`${row}-${col}`} className={cellClass}>
-            {String.fromCharCode(65 + (row * 15 + col) % 26)}
+            {cellContent}
           </div>
         );
       }
