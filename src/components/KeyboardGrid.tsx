@@ -8,7 +8,7 @@ interface KeyboardGridProps {
 export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" }) => {
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
-    const activePositions = [1, 2, 3, 4, 7, 8, 9, 10];
+    const homeKeyPositions = [1, 2, 3, 4, 7, 8, 9, 10];
     const rowEndCols = [14, 14, 13, 11]; // Row 0: 14 (0-13), Row 1: 13 (1-13), Row 2: 12 (1-12), Row 3: 10 (1-10)
 
     // Get keyboard layout data
@@ -20,14 +20,14 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" 
       const endCol = rowEndCols[row];
 
       for (let col: number = startCol; col < endCol; col++) {
-        const isActiveKey = row === 2 && activePositions.includes(col);
+        const isHomeKey = row === 2 && homeKeyPositions.includes(col);
         const isLastCell = col === endCol - 1;
 
         // Get key data first
         const keyData = keyboardLayout[row][col];
 
         let cellClass = "keyboard-grid-cell";
-        if (isActiveKey) cellClass += " keyboard-grid-active-key";
+        if (isHomeKey) cellClass += " keyboard-grid-home-key";
         if (row === 0 && isLastCell) cellClass += " keyboard-grid-backspace";
         if (row === 2 && isLastCell) cellClass += " keyboard-grid-return";
 
