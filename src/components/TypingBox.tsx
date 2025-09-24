@@ -1,11 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface TypingBoxProps {
   onWordSubmit: (word: string) => boolean;
+  currentWord: string;
+  onHighlightChange: (key: string) => void;
 }
 
-export const TypingBox: React.FC<TypingBoxProps> = ({ onWordSubmit }) => {
+export const TypingBox: React.FC<TypingBoxProps> = ({
+  onWordSubmit,
+  currentWord,
+  onHighlightChange
+}) => {
   const [textInput, setTextInput] = useState<string>('');
+
+  const calculateHighlightedKey = (input: string, target: string): string => {
+    if (!target) return "";
+
+    if (input === "") {
+      // Empty input - highlight first character of current word
+      return target[0].toLowerCase();
+    } else if (target.toLowerCase().startsWith(input.toLowerCase())) {
+      if (input.toLowerCase() === target.toLowerCase()) {
+        // Exact match - highlight Return key
+        return "return";
+      } else {
+        // Partial match - highlight next character
+        return target[input.length].toLowerCase();
+      }
+    } else {
+      // No match - highlight Backspace
+      return "backspace";
+    }
+  };
+
+  useEffect(() => {
+    const highlightedKey = calculateHighlightedKey(textInput, currentWord);
+    onHighlightChange(highlightedKey);
+  }, [textInput, currentWord, onHighlightChange]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === ' ' || e.key === 'Enter') {

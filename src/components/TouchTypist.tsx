@@ -20,6 +20,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     remainder: "",
     pending: []
   });
+  const [highlightedKey, setHighlightedKey] = useState<string>("");
 
   const generateRandomWord = (): string => {
     const keyboardLayout = getDefaultKeyboardLayout();
@@ -58,7 +59,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   const initializeWordsState = (): void => {
     const pending: string[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 2; i++) {
       pending.push(generatePhrase());
     }
 
@@ -119,9 +120,13 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     <div className="app-container">
       <PendingWords wordsState={wordsState} />
 
-      <TypingBox onWordSubmit={handleWordMatch} />
+      <TypingBox
+        onWordSubmit={handleWordMatch}
+        currentWord={wordsState.current}
+        onHighlightChange={setHighlightedKey}
+      />
 
-      <KeyboardGrid />
+      <KeyboardGrid highlightedKey={highlightedKey} />
     </div>
   );
 };

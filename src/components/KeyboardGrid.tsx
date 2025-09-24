@@ -1,9 +1,11 @@
 import React from 'react';
 import { getDefaultKeyboardLayout } from '../utils/keyboardLayouts';
 
-interface KeyboardGridProps {}
+interface KeyboardGridProps {
+  highlightedKey?: string;
+}
 
-export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
+export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" }) => {
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
     const activePositions = [1, 2, 3, 4, 7, 8, 9, 10];
@@ -21,10 +23,25 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
         const isActiveKey = row === 2 && activePositions.includes(col);
         const isLastCell = col === endCol - 1;
 
+        // Get key data first
+        const keyData = keyboardLayout[row][col];
+
         let cellClass = "keyboard-grid-cell";
         if (isActiveKey) cellClass += " keyboard-grid-active-key";
         if (row === 0 && isLastCell) cellClass += " keyboard-grid-backspace";
         if (row === 2 && isLastCell) cellClass += " keyboard-grid-return";
+
+        // Check for key highlighting (now keyData is available)
+        const shouldHighlight = (
+          (highlightedKey === "backspace" && row === 0 && isLastCell) ||
+          (highlightedKey === "return" && row === 2 && isLastCell) ||
+          (highlightedKey !== "backspace" && highlightedKey !== "return" && highlightedKey &&
+           keyData && keyData !== "  " && keyData.toLowerCase().includes(highlightedKey))
+        );
+
+        if (shouldHighlight) {
+          cellClass += " keyboard-grid-highlighted";
+        }
 
         let cellContent: string;
         if (row === 0 && isLastCell) {
@@ -32,7 +49,6 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
         } else if (row === 2 && isLastCell) {
           cellContent = "Ret";
         } else {
-          const keyData = keyboardLayout[row][col];
           if (keyData === "  ") {
             cellContent = "";
           } else if (keyData.length === 2) {

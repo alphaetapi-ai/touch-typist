@@ -122,3 +122,7 @@ body {
 .keyboard-grid-cell.keyboard-grid-return {
   width: calc(40px + 40px * 2 / 3);
 }
+
+.keyboard-grid-cell.keyboard-grid-highlighted {
+  background-color: #add8e6;
+}
