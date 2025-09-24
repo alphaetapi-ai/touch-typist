@@ -26,7 +26,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
   const [shiftMode, setShiftMode] = useState<boolean>(false);
 
-  const generateRandomWord = (): string => {
+  const generateRandomWord = (currentLevel: number = level): string => {
     const keyboardLayout = getDefaultKeyboardLayout();
 
     // Get all available characters for current level and below
@@ -38,7 +38,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         const keyLevel = keyLevels[row][col];
         const keyData = keyboardLayout[row][col];
 
-        if (keyLevel > 0 && keyLevel <= level && keyData && keyData !== "  ") {
+        if (keyLevel > 0 && keyLevel <= currentLevel && keyData && keyData !== "  ") {
           // Extract characters from key
           if (keyData.length === 2) {
             const char1 = keyData[0].toLowerCase();
@@ -47,13 +47,13 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
             if (shiftMode) {
               // Use both characters when shift mode is on
               availableCharacters.push(char1, char2);
-              if (keyLevel === level) {
+              if (keyLevel === currentLevel) {
                 currentLevelCharacters.push(char1, char2);
               }
             } else {
               // Only use first character (unshifted) when shift mode is off
               availableCharacters.push(char1);
-              if (keyLevel === level) {
+              if (keyLevel === currentLevel) {
                 currentLevelCharacters.push(char1);
               }
             }
@@ -61,7 +61,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
             const char = keyData.toLowerCase();
             availableCharacters.push(char);
 
-            if (keyLevel === level) {
+            if (keyLevel === currentLevel) {
               currentLevelCharacters.push(char);
             }
           }
@@ -88,15 +88,15 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
           hasCurrentLevelChar = true;
         }
       }
-    } while (!hasCurrentLevelChar && currentLevelCharacters.length > 0);
+    } while (!hasCurrentLevelChar && currentLevelCharacters.length > 0 && currentLevel < 25);
 
     return word;
   };
 
-  const generatePhrase = (): string => {
+  const generatePhrase = (currentLevel: number = level): string => {
     const words: string[] = [];
     for (let i = 0; i < 5; i++) {
-      words.push(generateRandomWord());
+      words.push(generateRandomWord(currentLevel));
     }
     return words.join(' ');
   };
@@ -105,7 +105,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     if (newLevel >= 1 && newLevel <= 25) {
       setLevel(newLevel);
       setSpeed(10); // Reset speed to 10 seconds
-      initializeWordsState();
+      initializeWordsState(newLevel);
     }
   };
 
@@ -114,13 +114,13 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     initializeWordsState();
   };
 
-  const initializeWordsState = (): void => {
+  const initializeWordsState = (currentLevel: number = level): void => {
     const pending: string[] = [];
     for (let i = 0; i < 1; i++) {
-      pending.push(generatePhrase());
+      pending.push(generatePhrase(currentLevel));
     }
 
-    const firstPhrase = generatePhrase();
+    const firstPhrase = generatePhrase(currentLevel);
     const words = firstPhrase.split(' ');
     const current = words[0];
     const remainder = words.slice(1).join(' ');
@@ -170,7 +170,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         const phraseWords = firstPhrase.split(' ');
         const newCurrent = phraseWords[0];
         const newRemainder = phraseWords.slice(1).join(' ');
-        const newPending = [...wordsState.pending.slice(1), generatePhrase()];
+        const newPending = [...wordsState.pending.slice(1), generatePhrase(level)];
 
         setWordsState({
           typed: "", // Start fresh for new phrase
