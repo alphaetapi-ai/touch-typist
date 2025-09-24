@@ -23,7 +23,7 @@ body {
 
 .level-display {
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 2.4rem;
   font-weight: bold;
   color: #333;
 }
@@ -143,4 +143,8 @@ body {
 
 .keyboard-grid-cell.keyboard-grid-highlighted {
   background-color: #add8e6;
+}
+
+#backspace-key.keyboard-grid-highlighted {
+  background-color: #ffcccb;
 }

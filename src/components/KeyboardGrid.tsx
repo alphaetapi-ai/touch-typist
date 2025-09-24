@@ -69,7 +69,11 @@ export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "",
         }
 
         cells.push(
-          <div key={`${row}-${col}`} className={cellClass}>
+          <div
+            key={`${row}-${col}`}
+            className={cellClass}
+            id={row === 0 && isLastCell ? "backspace-key" : undefined}
+          >
             {cellContent}
           </div>
         );
