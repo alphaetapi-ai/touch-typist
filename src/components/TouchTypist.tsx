@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { KeyboardGrid } from './KeyboardGrid';
+import { TypingBox } from './TypingBox';
 
 interface TouchTypistProps {}
 
 export const TouchTypist: React.FC<TouchTypistProps> = () => {
-  const [textInput, setTextInput] = useState<string>('');
 
 
   return (
@@ -14,15 +14,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         <p>Two</p>
       </div>
 
-      <div className="middle-area">
-        <input
-          type="text"
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-          placeholder="Type here..."
-          className="text-input"
-        />
-      </div>
+      <TypingBox />
 
       <KeyboardGrid />
     </div>

@@ -34,13 +34,13 @@ body {
   font-size: 1rem;
 }
 
-/* Middle Area */
-.middle-area {
+/* TypingBox Component */
+.typing-box-container {
   flex: 0 0 auto;
   padding: 10px 0;
 }
 
-.text-input {
+.typing-box-input {
   width: 100%;
   padding: 10px;
   font-size: 1rem;
