@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { KeyboardGrid } from './KeyboardGrid';
 import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
-import { getDefaultKeyboardLayout, keyLevels } from '../utils/keyboardLayouts';
+import { getDefaultKeyboardLayout, keyLevels, getKeyboardLayout } from '../utils/keyboardLayouts';
 
 interface TouchTypistProps {}
 
@@ -25,9 +25,10 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   const [speed, setSpeed] = useState<number>(10);
   const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
   const [shiftMode, setShiftMode] = useState<boolean>(false);
+  const [selectedLayout, setSelectedLayout] = useState<string>("Qwerty");
 
   const generateRandomWord = (currentLevel: number = level): string => {
-    const keyboardLayout = getDefaultKeyboardLayout();
+    const keyboardLayout = getKeyboardLayout(selectedLayout) || getDefaultKeyboardLayout();
 
     // Get all available characters for current level and below
     const availableCharacters: string[] = [];
@@ -111,6 +112,11 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   const handleShiftChange = (newShiftMode: boolean): void => {
     setShiftMode(newShiftMode);
+    initializeWordsState();
+  };
+
+  const handleLayoutChange = (newLayout: string): void => {
+    setSelectedLayout(newLayout);
     initializeWordsState();
   };
 
@@ -213,6 +219,16 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
           />
           Shift?
         </label>
+        <label>
+          Layout:
+          <select
+            value={selectedLayout}
+            onChange={(e) => handleLayoutChange(e.target.value)}
+          >
+            <option value="Qwerty">Qwerty</option>
+            <option value="Dvorak">Dvorak</option>
+          </select>
+        </label>
       </div>
       <PendingWords wordsState={wordsState} />
 
@@ -222,7 +238,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         onHighlightChange={setHighlightedKey}
       />
 
-      <KeyboardGrid highlightedKey={highlightedKey} currentLevel={level} />
+      <KeyboardGrid highlightedKey={highlightedKey} currentLevel={level} selectedLayout={selectedLayout} />
     </div>
   );
 };

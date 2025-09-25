@@ -20,16 +20,26 @@ export const dvorakLayout: string[][] = [
   ["  ", ";:", "qQ", "jJ", "kK", "xX", "bB", "mM", "wW", "vV", "zZ"]
 ];
 
+export const qwertyLayout: string[][] = [
+  ["`~", "1!", "2@", "3#", "4$", "5%", "6^", "7&", "8*", "9(", "0)", "-_", "=+"],
+  ["  ", "qQ", "wW", "eE", "rR", "tT", "yY", "uU", "iI", "oO", "pP", "[{", "]}", "\\|"],
+  ["  ", "aA", "sS", "dD", "fF", "gG", "hH", "jJ", "kK", "lL", ";:", "'\""],
+  ["  ", "zZ", "xX", "cC", "vV", "bB", "nN", "mM", ",<", ".>", "/?"]
+];
+
 export const keyboardLayouts: KeyboardLayout[] = [
   {
     name: "Dvorak",
     layout: dvorakLayout
+  }, {
+    name: "Qwerty",
+    layout: qwertyLayout
   }
 ];
 
 // Default keyboard layout
 export const getDefaultKeyboardLayout = (): string[][] => {
-  return dvorakLayout;
+  return qwertyLayout;
 };
 
 // Get keyboard layout by name (for future database integration)
