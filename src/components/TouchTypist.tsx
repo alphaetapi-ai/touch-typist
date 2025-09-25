@@ -27,8 +27,8 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   const [shiftMode, setShiftMode] = useState<boolean>(false);
   const [selectedLayout, setSelectedLayout] = useState<string>("Qwerty");
 
-  const generateRandomWord = (currentLevel: number = level): string => {
-    const keyboardLayout = getKeyboardLayout(selectedLayout) || getDefaultKeyboardLayout();
+  const generateRandomWord = (currentLevel: number = level, layoutName: string = selectedLayout): string => {
+    const keyboardLayout = getKeyboardLayout(layoutName) || getDefaultKeyboardLayout();
 
     // Get all available characters for current level and below
     const availableCharacters: string[] = [];
@@ -94,10 +94,10 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     return word;
   };
 
-  const generatePhrase = (currentLevel: number = level): string => {
+  const generatePhrase = (currentLevel: number = level, layoutName: string = selectedLayout): string => {
     const words: string[] = [];
     for (let i = 0; i < 5; i++) {
-      words.push(generateRandomWord(currentLevel));
+      words.push(generateRandomWord(currentLevel, layoutName));
     }
     return words.join(' ');
   };
@@ -117,16 +117,16 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   const handleLayoutChange = (newLayout: string): void => {
     setSelectedLayout(newLayout);
-    initializeWordsState();
+    initializeWordsState(level, newLayout);
   };
 
-  const initializeWordsState = (currentLevel: number = level): void => {
+  const initializeWordsState = (currentLevel: number = level, layoutName: string = selectedLayout): void => {
     const pending: string[] = [];
     for (let i = 0; i < 1; i++) {
-      pending.push(generatePhrase(currentLevel));
+      pending.push(generatePhrase(currentLevel, layoutName));
     }
 
-    const firstPhrase = generatePhrase(currentLevel);
+    const firstPhrase = generatePhrase(currentLevel, layoutName);
     const words = firstPhrase.split(' ');
     const current = words[0];
     const remainder = words.slice(1).join(' ');
@@ -176,7 +176,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         const phraseWords = firstPhrase.split(' ');
         const newCurrent = phraseWords[0];
         const newRemainder = phraseWords.slice(1).join(' ');
-        const newPending = [...wordsState.pending.slice(1), generatePhrase(level)];
+        const newPending = [...wordsState.pending.slice(1), generatePhrase(level, selectedLayout)];
 
         setWordsState({
           typed: "", // Start fresh for new phrase
