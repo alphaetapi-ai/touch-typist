@@ -63,6 +63,10 @@ export const TypingBox: React.FC<TypingBoxProps> = ({
         onKeyPress={handleKeyPress}
         placeholder="Type here..."
         className="typing-box-input"
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
       />
     </div>
   );
