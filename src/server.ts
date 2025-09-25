@@ -1,12 +1,12 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path';
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT: number = parseInt(process.env.PORT || '8080', 10);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send(`
 <!DOCTYPE html>
 <html lang="en">
