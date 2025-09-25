@@ -21,7 +21,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     pending: []
   });
   const [highlightedKey, setHighlightedKey] = useState<string>("");
-  const [level, setLevel] = useState<number>(1);
+  const [level, setLevel] = useState<number>(2);
   const [speed, setSpeed] = useState<number>(10);
   const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
   const [shiftMode, setShiftMode] = useState<boolean>(false);
