@@ -197,6 +197,10 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
   return (
     <div className="app-container">
+      <div className="about-box">
+        TouchTypist by Adam Peterson<br />
+        <a href="https://github.com/alphaetapi-ai/touch-typist" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
       <div className="level-display">Level: {level} | Speed: {(60 / speed).toFixed(1)} WPM</div>
       <div className="controls">
         <button

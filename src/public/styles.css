@@ -19,6 +19,26 @@ body {
   height: 100vh;
   padding: 20px;
   gap: 20px;
+  position: relative;
+}
+
+.about-box {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 0.8rem;
+  color: #666;
+  text-align: right;
+  z-index: 10;
+}
+
+.about-box a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.about-box a:hover {
+  text-decoration: underline;
 }
 
 .level-display {
