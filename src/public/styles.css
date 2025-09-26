@@ -41,9 +41,11 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 20px;
-  gap: 20px;
+  padding: 16px 24px;
+  gap: 16px;
   position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .about-box {
@@ -76,12 +78,12 @@ body {
 
 .level-display {
   text-align: center;
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--color-text-primary);
-  line-height: 1.2;
+  line-height: 1.1;
   letter-spacing: -0.02em;
-  margin: 0.5rem 0;
+  margin: 0.25rem 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -93,8 +95,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
-  margin: 10px 0;
+  gap: 12px;
+  margin: 6px 0;
 }
 
 .controls button {
@@ -156,21 +158,29 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   background-color: var(--color-bg-card);
-  padding: 24px;
+  padding: 32px;
   overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 0;
+  scroll-behavior: smooth;
 }
 
 .pending-words-container p {
   margin: 0;
-  font-size: 2.2rem;
-  line-height: 1.4;
+  font-size: 2.4rem;
+  line-height: 1.5;
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+  text-align: center;
 }
 
 .pending-words-typed {
@@ -182,6 +192,8 @@ body {
   color: var(--color-primary);
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
+  display: inline-block;
+  position: relative;
 }
 
 .pending-words-remainder {
@@ -192,23 +204,24 @@ body {
 /* TypingBox Component */
 .typing-box-container {
   flex: 0 0 auto;
-  padding: 16px 0;
+  padding: 12px 0;
   display: flex;
   justify-content: center;
 }
 
 .typing-box-input {
-  width: 320px;
-  padding: 14px 18px;
-  font-size: 1.15rem;
+  width: min(480px, 80vw);
+  padding: 16px 20px;
+  font-size: 1.2rem;
   font-weight: 500;
   border: 2px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 10px;
   background-color: var(--color-bg-card);
   color: var(--color-text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.2s ease;
   letter-spacing: 0.01em;
   line-height: 1.4;
+  text-align: center;
 }
 
 .typing-box-input:focus {
@@ -223,12 +236,13 @@ body {
 /* KeyboardGrid Component */
 .keyboard-grid-container {
   flex: 0 0 auto;
+  padding-top: 8px;
 }
 
 .keyboard-grid {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   align-items: flex-start;
   justify-self: center;
   width: fit-content;
