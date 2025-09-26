@@ -14,15 +14,10 @@ const TouchTypistInner: React.FC = () => {
   const { wordsState, highlightedKey, submitWord, updateHighlight, initializeSession, currentWPM } = useTypingSession();
 
 
-  // Initialize typing session when component mounts
+  // Initialize typing session on mount and regenerate when user manually changes settings
   useEffect(() => {
     initializeSession();
-  }, []); // Initialize session on component mount
-
-  // Regenerate typing content when user manually changes settings (not automatic level progression)
-  useEffect(() => {
-    initializeSession();
-  }, [selectedLayout, shiftMode, initializeSession]); // Only react to layout and shift mode changes
+  }, [selectedLayout, shiftMode, initializeSession]); // Runs on mount + when layout/shift changes
 
   return (
     <div className="app-container">
