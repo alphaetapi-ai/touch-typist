@@ -5,11 +5,30 @@
   box-sizing: border-box;
 }
 
+/* Modern Color Variables */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-success: #10b981;
+  --color-success-light: #34d399;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-text-primary: #1f2937;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-bg-primary: #f8fafc;
+  --color-bg-secondary: #f1f5f9;
+  --color-bg-card: #ffffff;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+}
+
 /* Typography */
 body {
   font-family: Arial, sans-serif;
-  color: #333;
-  background-color: #d8d8d8;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
 }
 
 /* App Layout */
@@ -27,17 +46,18 @@ body {
   top: 20px;
   right: 20px;
   font-size: 0.8rem;
-  color: #666;
+  color: var(--color-text-secondary);
   text-align: right;
   z-index: 10;
 }
 
 .about-box a {
-  color: #0066cc;
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .about-box a:hover {
+  color: var(--color-primary-dark);
   text-decoration: underline;
 }
 
@@ -45,7 +65,7 @@ body {
   text-align: center;
   font-size: 2.4rem;
   font-weight: bold;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .controls {
@@ -57,84 +77,112 @@ body {
 }
 
 .controls button {
-  padding: 5px 10px;
+  padding: 8px 16px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f0f0f0;
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .controls button:hover:not(:disabled) {
-  background-color: #e0e0e0;
+  background-color: var(--color-bg-secondary);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .controls button:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-muted);
 }
 
 .controls label {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   font-size: 1rem;
+  color: var(--color-text-primary);
   cursor: pointer;
 }
 
 .controls select {
-  padding: 2px 5px;
+  padding: 6px 12px;
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f0f0f0;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
   cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.controls select:focus {
+  outline: none;
+  border-color: var(--color-primary);
 }
 
 /* PendingWords Component */
 .pending-words-container {
   flex: 1;
-  border: 1px solid #ccc;
-  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background-color: var(--color-bg-card);
+  padding: 24px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .pending-words-container p {
   margin: 0;
   font-size: 2rem;
-  line-height: 1.1;
+  line-height: 1.3;
 }
 
 .pending-words-typed {
-  color: #999;
+  color: var(--color-text-muted);
 }
 
 .pending-words-current {
-  color: #0066cc;
+  color: var(--color-primary);
+  font-weight: 600;
 }
 
 .pending-words-remainder {
-  color: #333;
+  color: var(--color-text-secondary);
 }
 
 /* TypingBox Component */
 .typing-box-container {
   flex: 0 0 auto;
-  padding: 10px 0;
+  padding: 16px 0;
   display: flex;
   justify-content: center;
 }
 
 .typing-box-input {
-  width: 300px;
-  padding: 8px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  width: 320px;
+  padding: 12px 16px;
+  font-size: 1.1rem;
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-bg-card);
+  color: var(--color-text-primary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.typing-box-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* KeyboardGrid Component */
@@ -177,30 +225,45 @@ body {
 .keyboard-grid-cell {
   width: 40px;
   height: 40px;
-  border: 1px solid #000;
-  border-radius: 8px;
+  border: 2px solid var(--color-text-secondary);
+  border-radius: 6px;
   display: flex !important;
   align-items: center;
   justify-content: center;
-  background-color: #c0c0c0;
+  background-color: var(--color-text-secondary);
+  color: var(--color-bg-card);
   font-family: monospace;
-  font-size: 14px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 600;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+  opacity: 0.6;
 }
 
 .keyboard-grid-cell.keyboard-grid-home-key {
-  border: 3px solid #000;
-  background-color: #b0d0b0;
+  border: 3px solid var(--color-text-primary);
+  background-color: var(--color-text-primary);
+  color: var(--color-bg-card);
+  font-weight: 700;
+  opacity: 0.7;
 }
 
 .keyboard-grid-cell.keyboard-grid-active-key {
-  background-color: white;
+  background-color: var(--color-bg-card);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  opacity: 1;
 }
 
 .keyboard-grid-cell.keyboard-grid-home-key.keyboard-grid-active-key {
-  border: 3px solid #000;
-  background-color: #e0ffe0;
+  border: 3px solid var(--color-success);
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  font-weight: 700;
+  opacity: 1;
 }
 
 .keyboard-grid-cell.keyboard-grid-backspace {
@@ -212,9 +275,27 @@ body {
 }
 
 .keyboard-grid-cell.keyboard-grid-highlighted {
-  background-color: #add8e6;
+  background-color: rgba(37, 99, 235, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+  opacity: 1 !important;
+}
+
+.keyboard-grid-cell.keyboard-grid-home-key.keyboard-grid-highlighted {
+  background-color: rgba(37, 99, 235, 0.2);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  opacity: 1 !important;
 }
 
 #backspace-key.keyboard-grid-highlighted {
-  background-color: #ffcccb;
+  background-color: rgba(239, 68, 68, 0.15);
+  border-color: var(--color-error);
+  color: var(--color-error);
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+  opacity: 1 !important;
 }
