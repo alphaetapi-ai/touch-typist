@@ -6,8 +6,6 @@ import { AppSettingsProvider, useAppSettings } from '../contexts/AppSettingsCont
 import { TypingSessionProvider, useTypingSession } from '../contexts/TypingSessionContext';
 import { KeyboardHighlightProvider } from '../contexts/KeyboardHighlightContext';
 
-interface TouchTypistProps {}
-
 // Core typing game UI component that coordinates between contexts and child components
 const TouchTypistInner: React.FC = () => {
   // Access settings and session state from contexts
@@ -87,7 +85,7 @@ const TouchTypistControls: React.FC = () => {
 };
 
 // Root TouchTypist component that provides all contexts to child components
-export const TouchTypist: React.FC<TouchTypistProps> = () => {
+export const TouchTypist: React.FC = () => {
   return (
     <AppSettingsProvider>
       <TypingSessionProvider>

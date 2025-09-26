@@ -3,9 +3,7 @@ import { getDefaultKeyboardLayout, keyLevels, getKeyboardLayout } from '../utils
 import { useAppSettings } from '../contexts/AppSettingsContext';
 import { useKeyboardHighlight } from '../contexts/KeyboardHighlightContext';
 
-interface KeyboardGridProps {}
-
-export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
+export const KeyboardGrid: React.FC = () => {
   // Get current level and layout from app settings context
   const { level: currentLevel, selectedLayout } = useAppSettings();
   const { highlightedKey } = useKeyboardHighlight();
