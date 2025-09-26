@@ -3,6 +3,7 @@ import { KeyboardGrid } from './KeyboardGrid';
 import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
 import { getDefaultKeyboardLayout, keyLevels, getKeyboardLayout } from '../utils/keyboardLayouts';
+import { AppSettingsProvider, useAppSettings } from '../contexts/AppSettingsContext';
 
 interface TouchTypistProps {}
 
@@ -13,7 +14,11 @@ interface WordsState {
   pending: string[];
 }
 
-export const TouchTypist: React.FC<TouchTypistProps> = () => {
+// Main typing game component that consumes app settings from context
+const TouchTypistInner: React.FC = () => {
+  // Get app settings from context
+  const { level, selectedLayout, shiftMode, setLevel } = useAppSettings();
+
   const [wordsState, setWordsState] = useState<WordsState>({
     typed: "",
     current: "",
@@ -21,11 +26,8 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     pending: []
   });
   const [highlightedKey, setHighlightedKey] = useState<string>("");
-  const [level, setLevel] = useState<number>(2);
   const [speed, setSpeed] = useState<number>(10);
   const [wordStartTime, setWordStartTime] = useState<number>(Date.now());
-  const [shiftMode, setShiftMode] = useState<boolean>(false);
-  const [selectedLayout, setSelectedLayout] = useState<string>("Qwerty");
 
   const generateRandomWord = (currentLevel: number = level, layoutName: string = selectedLayout): string => {
     const keyboardLayout = getKeyboardLayout(layoutName) || getDefaultKeyboardLayout();
@@ -102,22 +104,9 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
     return words.join(' ');
   };
 
-  const handleLevelChange = (newLevel: number): void => {
-    if (newLevel >= 1 && newLevel <= 25) {
-      setLevel(newLevel);
-      setSpeed(10); // Reset speed to 10 seconds
-      initializeWordsState(newLevel);
-    }
-  };
-
-  const handleShiftChange = (newShiftMode: boolean): void => {
-    setShiftMode(newShiftMode);
-    initializeWordsState();
-  };
-
-  const handleLayoutChange = (newLayout: string): void => {
-    setSelectedLayout(newLayout);
-    initializeWordsState(level, newLayout);
+  // Handler to reset typing speed when user manually changes level
+  const handleLevelSpeedReset = (): void => {
+    setSpeed(10);
   };
 
   const initializeWordsState = (currentLevel: number = level, layoutName: string = selectedLayout): void => {
@@ -152,7 +141,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
 
       // Check for level progression
       if (newSpeed < 5 && level < 25) {
-        setLevel(level + 1);
+        setLevel(level + 1); // This will trigger onSettingsChange through context
         setSpeed(10); // Reset speed to 10 seconds
       }
       const newTyped = wordsState.typed ? `${wordsState.typed} ${wordsState.current}` : wordsState.current;
@@ -192,8 +181,13 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
   };
 
   useEffect(() => {
-    initializeWordsState();
-  }, []);
+    initializeWordsState(level, selectedLayout);
+  }, []); // Initialize words on component mount
+
+  // Regenerate words whenever app settings change
+  useEffect(() => {
+    initializeWordsState(level, selectedLayout);
+  }, [level, selectedLayout, shiftMode]); // React to settings changes
 
   return (
     <div className="app-container">
@@ -202,38 +196,7 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         <a href="https://github.com/alphaetapi-ai/touch-typist" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
       <div className="level-display">Level: {level} | Speed: {(60 / speed).toFixed(1)} WPM</div>
-      <div className="controls">
-        <button
-          onClick={() => handleLevelChange(level - 1)}
-          disabled={level <= 1}
-        >
-          -1
-        </button>
-        <button
-          onClick={() => handleLevelChange(level + 1)}
-          disabled={level >= 25}
-        >
-          +1
-        </button>
-        <label>
-          <input
-            type="checkbox"
-            checked={shiftMode}
-            onChange={(e) => handleShiftChange(e.target.checked)}
-          />
-          Shift?
-        </label>
-        <label>
-          Layout:
-          <select
-            value={selectedLayout}
-            onChange={(e) => handleLayoutChange(e.target.value)}
-          >
-            <option value="Qwerty">Qwerty</option>
-            <option value="Dvorak">Dvorak</option>
-          </select>
-        </label>
-      </div>
+      <TouchTypistControls onLevelChange={handleLevelSpeedReset} />
       <PendingWords wordsState={wordsState} />
 
       <TypingBox
@@ -242,7 +205,61 @@ export const TouchTypist: React.FC<TouchTypistProps> = () => {
         onHighlightChange={setHighlightedKey}
       />
 
-      <KeyboardGrid highlightedKey={highlightedKey} currentLevel={level} selectedLayout={selectedLayout} />
+      <KeyboardGrid highlightedKey={highlightedKey} />
     </div>
+  );
+};
+
+// UI controls for level adjustment, layout selection, and shift mode toggle
+const TouchTypistControls: React.FC<{ onLevelChange: (level: number) => void }> = ({ onLevelChange }) => {
+  const { level, selectedLayout, shiftMode, handleLevelChange, handleLayoutChange, handleShiftChange } = useAppSettings();
+
+  const handleLevelClick = (newLevel: number) => {
+    handleLevelChange(newLevel);
+    onLevelChange(newLevel);
+  };
+
+  return (
+    <div className="controls">
+      <button
+        onClick={() => handleLevelClick(level - 1)}
+        disabled={level <= 1}
+      >
+        -1
+      </button>
+      <button
+        onClick={() => handleLevelClick(level + 1)}
+        disabled={level >= 25}
+      >
+        +1
+      </button>
+      <label>
+        <input
+          type="checkbox"
+          checked={shiftMode}
+          onChange={(e) => handleShiftChange(e.target.checked)}
+        />
+        Shift?
+      </label>
+      <label>
+        Layout:
+        <select
+          value={selectedLayout}
+          onChange={(e) => handleLayoutChange(e.target.value)}
+        >
+          <option value="Qwerty">Qwerty</option>
+          <option value="Dvorak">Dvorak</option>
+        </select>
+      </label>
+    </div>
+  );
+};
+
+// Root TouchTypist component that provides app settings context to child components
+export const TouchTypist: React.FC<TouchTypistProps> = () => {
+  return (
+    <AppSettingsProvider>
+      <TouchTypistInner />
+    </AppSettingsProvider>
   );
 };

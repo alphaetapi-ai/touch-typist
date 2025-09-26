@@ -1,19 +1,20 @@
 import React from 'react';
 import { getDefaultKeyboardLayout, keyLevels, getKeyboardLayout } from '../utils/keyboardLayouts';
+import { useAppSettings } from '../contexts/AppSettingsContext';
 
 interface KeyboardGridProps {
   highlightedKey?: string;
-  currentLevel?: number;
-  selectedLayout?: string;
 }
 
-export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "", currentLevel = 1, selectedLayout = "Qwerty" }) => {
+export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" }) => {
+  // Get current level and layout from app settings context
+  const { level: currentLevel, selectedLayout } = useAppSettings();
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
     const homeKeyPositions = [1, 2, 3, 4, 7, 8, 9, 10];
     const rowEndCols = [14, 14, 13, 11]; // Row 0: 14 (0-13), Row 1: 13 (1-13), Row 2: 12 (1-12), Row 3: 10 (1-10)
 
-    // Get keyboard layout data
+    // Get keyboard layout data based on selected layout
     const keyboardLayout = getKeyboardLayout(selectedLayout) || getDefaultKeyboardLayout();
 
     for (let row: number = 0; row < 4; row++) {
