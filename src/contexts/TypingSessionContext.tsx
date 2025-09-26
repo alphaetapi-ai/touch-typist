@@ -14,14 +14,12 @@ interface TypingSessionContextType {
   // Typing state
   wordsState: WordsState;
   speed: number;
-  highlightedKey: string;
 
   // Computed values
   currentWPM: number;
 
   // Actions
   submitWord: (word: string) => boolean;
-  updateHighlight: (key: string) => void;
   resetSession: () => void;
   initializeSession: (overrideLevel?: number) => void;
 }
@@ -46,7 +44,6 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
     pending: []
   });
   const [speed, setSpeed] = useState<number>(10);
-  const [highlightedKey, setHighlightedKey] = useState<string>("");
   const wordStartTime = useRef<number>(Date.now());
 
   // Generate random words based on current level and keyboard layout
@@ -199,10 +196,6 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
     return false; // No match
   }, [wordsState, speed, level, setLevel, generatePhrase, selectedLayout]);
 
-  // Set which key should be visually highlighted on the keyboard
-  const updateHighlight = useCallback((key: string): void => {
-    setHighlightedKey(key);
-  }, []);
 
   // Start over with a completely fresh typing session
   const resetSession = useCallback((): void => {
@@ -217,14 +210,12 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
     // State
     wordsState,
     speed,
-    highlightedKey,
 
     // Computed
     currentWPM,
 
     // Actions
     submitWord,
-    updateHighlight,
     resetSession,
     initializeSession,
   };

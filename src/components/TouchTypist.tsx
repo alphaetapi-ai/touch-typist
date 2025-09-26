@@ -4,6 +4,7 @@ import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
 import { AppSettingsProvider, useAppSettings } from '../contexts/AppSettingsContext';
 import { TypingSessionProvider, useTypingSession } from '../contexts/TypingSessionContext';
+import { KeyboardHighlightProvider } from '../contexts/KeyboardHighlightContext';
 
 interface TouchTypistProps {}
 
@@ -11,8 +12,7 @@ interface TouchTypistProps {}
 const TouchTypistInner: React.FC = () => {
   // Access settings and session state from contexts
   const { level, selectedLayout, shiftMode } = useAppSettings();
-  const { wordsState, highlightedKey, submitWord, updateHighlight, initializeSession, currentWPM } = useTypingSession();
-
+  const { wordsState, submitWord, initializeSession, currentWPM } = useTypingSession();
 
   // Initialize typing session on mount and regenerate when user manually changes settings
   useEffect(() => {
@@ -32,10 +32,9 @@ const TouchTypistInner: React.FC = () => {
       <TypingBox
         onWordSubmit={submitWord}
         currentWord={wordsState.current}
-        onHighlightChange={updateHighlight}
       />
 
-      <KeyboardGrid highlightedKey={highlightedKey} />
+      <KeyboardGrid />
     </div>
   );
 };
@@ -87,12 +86,14 @@ const TouchTypistControls: React.FC = () => {
   );
 };
 
-// Root TouchTypist component that provides both contexts to child components
+// Root TouchTypist component that provides all contexts to child components
 export const TouchTypist: React.FC<TouchTypistProps> = () => {
   return (
     <AppSettingsProvider>
       <TypingSessionProvider>
-        <TouchTypistInner />
+        <KeyboardHighlightProvider>
+          <TouchTypistInner />
+        </KeyboardHighlightProvider>
       </TypingSessionProvider>
     </AppSettingsProvider>
   );

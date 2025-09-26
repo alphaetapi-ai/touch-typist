@@ -1,14 +1,14 @@
 import React from 'react';
 import { getDefaultKeyboardLayout, keyLevels, getKeyboardLayout } from '../utils/keyboardLayouts';
 import { useAppSettings } from '../contexts/AppSettingsContext';
+import { useKeyboardHighlight } from '../contexts/KeyboardHighlightContext';
 
-interface KeyboardGridProps {
-  highlightedKey?: string;
-}
+interface KeyboardGridProps {}
 
-export const KeyboardGrid: React.FC<KeyboardGridProps> = ({ highlightedKey = "" }) => {
+export const KeyboardGrid: React.FC<KeyboardGridProps> = () => {
   // Get current level and layout from app settings context
   const { level: currentLevel, selectedLayout } = useAppSettings();
+  const { highlightedKey } = useKeyboardHighlight();
   const generateGrid = (): React.JSX.Element[] => {
     const grid: React.JSX.Element[] = [];
     const homeKeyPositions = [1, 2, 3, 4, 7, 8, 9, 10];
