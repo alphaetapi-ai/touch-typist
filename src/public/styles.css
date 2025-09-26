@@ -26,9 +26,14 @@
 
 /* Typography */
 body {
-  font-family: Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: var(--color-text-primary);
   background-color: var(--color-bg-primary);
+  line-height: 1.6;
+  font-feature-settings: 'kern' 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* App Layout */
@@ -45,10 +50,12 @@ body {
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--color-text-secondary);
   text-align: right;
   z-index: 10;
+  line-height: 1.5;
 }
 
 .about-box a {
@@ -63,9 +70,12 @@ body {
 
 .level-display {
   text-align: center;
-  font-size: 2.4rem;
-  font-weight: bold;
+  font-size: 2.5rem;
+  font-weight: 700;
   color: var(--color-text-primary);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0;
 }
 
 .controls {
@@ -77,15 +87,16 @@ body {
 }
 
 .controls button {
-  padding: 8px 16px;
-  font-size: 1rem;
-  font-weight: 500;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background-color: var(--color-bg-card);
   color: var(--color-text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
+  letter-spacing: 0.01em;
 }
 
 .controls button:hover:not(:disabled) {
@@ -105,14 +116,16 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--color-text-primary);
   cursor: pointer;
 }
 
 .controls select {
-  padding: 6px 12px;
-  font-size: 1rem;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-weight: 500;
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background-color: var(--color-bg-card);
@@ -143,21 +156,26 @@ body {
 
 .pending-words-container p {
   margin: 0;
-  font-size: 2rem;
-  line-height: 1.3;
+  font-size: 2.2rem;
+  line-height: 1.4;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 .pending-words-typed {
   color: var(--color-text-muted);
+  font-weight: 400;
 }
 
 .pending-words-current {
   color: var(--color-primary);
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
 }
 
 .pending-words-remainder {
   color: var(--color-text-secondary);
+  font-weight: 400;
 }
 
 /* TypingBox Component */
@@ -170,13 +188,16 @@ body {
 
 .typing-box-input {
   width: 320px;
-  padding: 12px 16px;
-  font-size: 1.1rem;
+  padding: 14px 18px;
+  font-size: 1.15rem;
+  font-weight: 500;
   border: 2px solid var(--color-border);
   border-radius: 8px;
   background-color: var(--color-bg-card);
   color: var(--color-text-primary);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
 }
 
 .typing-box-input:focus {
@@ -232,7 +253,7 @@ body {
   justify-content: center;
   background-color: var(--color-text-secondary);
   color: var(--color-bg-card);
-  font-family: monospace;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
   font-size: 13px;
   font-weight: 600;
   flex-shrink: 0;
