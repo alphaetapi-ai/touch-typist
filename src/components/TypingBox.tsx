@@ -19,16 +19,17 @@ export const TypingBox: React.FC<TypingBoxProps> = ({
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
       const trimmedInput = textInput.trim();
       if (trimmedInput) {
         const wasMatch = onWordSubmit(trimmedInput);
         if (wasMatch) {
+          e.preventDefault();
           setTextInput('');
-        } else if (e.key === ' ') {
-          // If word didn't match and it was a space, add the space to the input
-          setTextInput(textInput + ' ');
+        } else if (e.key === 'Enter') {
+          // Prevent Enter when word doesn't match, but allow space to be handled naturally
+          e.preventDefault();
         }
+        // For space key: if word doesn't match, let browser handle it naturally (no preventDefault)
       }
     }
   };
