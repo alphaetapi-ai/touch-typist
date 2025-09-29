@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { KeyboardGrid } from './KeyboardGrid';
 import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
@@ -21,7 +22,7 @@ const TouchTypistInner: React.FC = () => {
     <div className="app-container">
       <div className="about-box">
         TouchTypist by Adam Peterson<br />
-        <a href="https://github.com/alphaetapi-ai/touch-typist" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/alphaetapi-ai/touch-typist" target="_blank" rel="noopener noreferrer">GitHub</a> | <Link to="/instructions" className="instructions-link">Instructions</Link>
       </div>
       <div className="level-display">Level: {level} | Speed: {currentWPM.toFixed(1)} WPM</div>
       <TouchTypistControls />
