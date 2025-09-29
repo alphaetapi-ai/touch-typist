@@ -18,4 +18,9 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
+  performance: {
+    maxAssetSize: 500000, // 500 KiB instead of default 244 KiB
+    maxEntrypointSize: 500000, // 500 KiB instead of default 244 KiB
+    hints: 'warning', // Keep as warnings, not errors
+  },
 };
