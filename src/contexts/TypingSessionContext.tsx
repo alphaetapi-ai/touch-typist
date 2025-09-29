@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useRef, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useReducer, useRef, useCallback, ReactNode } from 'react';
 import { getKeyboardLayout, getDefaultKeyboardLayout, keyLevels } from '../utils/keyboardLayouts';
 import { useAppSettings } from './AppSettingsContext';
 
@@ -9,6 +9,91 @@ export interface WordsState {
   remainder: string;
   pending: string[];
 }
+
+// Action types for the words state reducer
+type WordsAction =
+  | { type: 'INITIALIZE_SESSION'; payload: { phrases: string[] } }
+  | { type: 'SUBMIT_WORD'; payload: { typedWord: string; generatePhrase: () => string } }
+  | { type: 'RESET_SESSION' };
+
+// Reducer function for words state management - contains ALL state transition logic
+const wordsReducer = (state: WordsState, action: WordsAction): WordsState => {
+  switch (action.type) {
+    case 'INITIALIZE_SESSION': {
+      const { phrases } = action.payload;
+      if (phrases.length === 0) {
+        return { typed: "", current: "", remainder: "", pending: [] };
+      }
+
+      const firstPhrase = phrases[0];
+      const words = firstPhrase.split(' ');
+      const current = words[0];
+      const remainder = words.slice(1).join(' ');
+      const pending = phrases.slice(1);
+
+      return {
+        typed: "",
+        current,
+        remainder,
+        pending
+      };
+    }
+
+    case 'SUBMIT_WORD': {
+      const { typedWord, generatePhrase } = action.payload;
+
+      // Check if the word matches
+      if (typedWord.toLowerCase() !== state.current.toLowerCase()) {
+        return state; // No change if word doesn't match
+      }
+
+      // Calculate new typed text
+      const newTyped = state.typed ? `${state.typed} ${state.current}` : state.current;
+
+      if (state.remainder) {
+        // Move first word from remainder to current
+        const remainderWords = state.remainder.split(' ');
+        const newCurrent = remainderWords[0];
+        const newRemainder = remainderWords.slice(1).join(' ');
+
+        return {
+          ...state,
+          typed: newTyped,
+          current: newCurrent,
+          remainder: newRemainder
+        };
+      } else if (state.pending.length > 0) {
+        // Move first phrase from pending to remainder/current
+        const firstPhrase = state.pending[0];
+        const phraseWords = firstPhrase.split(' ');
+        const newCurrent = phraseWords[0];
+        const newRemainder = phraseWords.slice(1).join(' ');
+        const newPending = [...state.pending.slice(1), generatePhrase()];
+
+        return {
+          typed: "", // Start fresh for new phrase
+          current: newCurrent,
+          remainder: newRemainder,
+          pending: newPending
+        };
+      }
+
+      // No more words available
+      return state;
+    }
+
+    case 'RESET_SESSION':
+      return {
+        typed: "",
+        current: "",
+        remainder: "",
+        pending: []
+      };
+
+    default:
+      return state;
+  }
+};
 
 interface TypingSessionContextType {
   // Typing state
@@ -36,8 +121,8 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
   // Get app settings from context
   const { level, selectedLayout, shiftMode, setLevel } = useAppSettings();
 
-  // Session state
-  const [wordsState, setWordsState] = useState<WordsState>({
+  // Session state using useReducer for complex words state
+  const [wordsState, dispatch] = useReducer(wordsReducer, {
     typed: "",
     current: "",
     remainder: "",
@@ -126,80 +211,56 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
   const initializeSession = useCallback((overrideLevel?: number): void => {
     const currentLevel = overrideLevel ?? level;
 
-    const pending: string[] = [];
-    for (let i = 0; i < 1; i++) {
-      pending.push(generatePhrase(currentLevel, selectedLayout));
+    // Generate initial phrases
+    const phrases: string[] = [];
+    for (let i = 0; i < 2; i++) { // Generate 2 phrases: 1 for current + 1 for pending
+      phrases.push(generatePhrase(currentLevel, selectedLayout));
     }
 
-    const firstPhrase = generatePhrase(currentLevel, selectedLayout);
-    const words = firstPhrase.split(' ');
-    const current = words[0];
-    const remainder = words.slice(1).join(' ');
-
-    setWordsState({
-      typed: "",
-      current,
-      remainder,
-      pending
+    dispatch({
+      type: 'INITIALIZE_SESSION',
+      payload: { phrases }
     });
     wordStartTime.current = Date.now();
   }, [generatePhrase, selectedLayout]); // Intentionally excludes level - prevents regeneration on automatic progression
 
   // Process submitted word, update speed, and advance to next word
   const submitWord = useCallback((typedWord: string): boolean => {
-    if (typedWord.toLowerCase() === wordsState.current.toLowerCase()) {
-      // Calculate time for this word and update speed
-      const wordTime = (Date.now() - wordStartTime.current) / 1000; // Convert to seconds
-      const cappedWordTime = Math.min(wordTime, 10); // Cap at 10 seconds
-      const newSpeed = speed * 0.9 + cappedWordTime * 0.1;
-      setSpeed(newSpeed);
+    // Calculate time for this word and update speed
+    const wordTime = (Date.now() - wordStartTime.current) / 1000; // Convert to seconds
+    const cappedWordTime = Math.min(wordTime, 10); // Cap at 10 seconds
+    const newSpeed = speed * 0.9 + cappedWordTime * 0.1;
+    setSpeed(newSpeed);
 
-      // Check for level progression
-      if (newSpeed < 5 && level < 25) {
-        setLevel(level + 1); // This will trigger useEffect in consuming components
-        setSpeed(10); // Reset speed to 10 seconds
-      }
-
-      const newTyped = wordsState.typed ? `${wordsState.typed} ${wordsState.current}` : wordsState.current;
-
-      if (wordsState.remainder) {
-        // Move first word from remainder to current
-        const remainderWords = wordsState.remainder.split(' ');
-        const newCurrent = remainderWords[0];
-        const newRemainder = remainderWords.slice(1).join(' ');
-
-        setWordsState({
-          ...wordsState,
-          typed: newTyped,
-          current: newCurrent,
-          remainder: newRemainder
-        });
-        wordStartTime.current = Date.now();
-      } else if (wordsState.pending.length > 0) {
-        // Move first phrase from pending to remainder/current
-        const firstPhrase = wordsState.pending[0];
-        const phraseWords = firstPhrase.split(' ');
-        const newCurrent = phraseWords[0];
-        const newRemainder = phraseWords.slice(1).join(' ');
-        const newPending = [...wordsState.pending.slice(1), generatePhrase(level, selectedLayout)];
-
-        setWordsState({
-          typed: "", // Start fresh for new phrase
-          current: newCurrent,
-          remainder: newRemainder,
-          pending: newPending
-        });
-        wordStartTime.current = Date.now();
-      }
-      return true; // Match found
+    // Check for level progression
+    if (newSpeed < 5 && level < 25) {
+      setLevel(level + 1); // This will trigger useEffect in consuming components
+      setSpeed(10); // Reset speed to 10 seconds
     }
-    return false; // No match
-  }, [wordsState, speed, level, setLevel, generatePhrase, selectedLayout]);
+
+    // Dispatch the word submission - reducer handles all the state logic
+    dispatch({
+      type: 'SUBMIT_WORD',
+      payload: {
+        typedWord,
+        generatePhrase: () => generatePhrase(level, selectedLayout)
+      }
+    });
+
+    // Check if the word matched (by comparing if state actually changed)
+    const wordMatched = typedWord.toLowerCase() === wordsState.current.toLowerCase();
+    if (wordMatched) {
+      wordStartTime.current = Date.now();
+    }
+
+    return wordMatched;
+  }, [wordsState.current, speed, level, setLevel, generatePhrase, selectedLayout]);
 
 
   // Start over with a completely fresh typing session
   const resetSession = useCallback((): void => {
     setSpeed(10);
+    dispatch({ type: 'RESET_SESSION' });
     initializeSession();
   }, [initializeSession]);
 
