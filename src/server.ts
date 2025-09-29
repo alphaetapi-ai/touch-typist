@@ -6,7 +6,8 @@ const PORT: number = parseInt(process.env.PORT || '8080', 10);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req: Request, res: Response) => {
+// Serve the React app HTML for all routes (client-side routing support)
+const serveReactApp = (req: Request, res: Response) => {
   res.send(`
 <!DOCTYPE html>
 <html lang="en">
@@ -22,7 +23,10 @@ app.get('/', (req: Request, res: Response) => {
 </body>
 </html>
   `);
-});
+};
+
+// Serve React app for all routes (this enables client-side routing)
+app.get('*', serveReactApp);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
