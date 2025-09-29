@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TouchTypist } from './components/TouchTypist';
 import { Instructions } from './components/Instructions';
+import { NotFound } from './components/NotFound';
 
 const App: React.FC = () => {
   return (
@@ -10,6 +11,7 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<TouchTypist />} />
         <Route path="/instructions" element={<Instructions />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
