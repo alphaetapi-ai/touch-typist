@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import { KeyboardGrid } from './KeyboardGrid';
 import { TypingBox } from './TypingBox';
 import { PendingWords } from './PendingWords';
-import { AppSettingsProvider, useAppSettings } from '../contexts/AppSettingsContext';
-import { TypingSessionProvider, useTypingSession } from '../contexts/TypingSessionContext';
-import { KeyboardHighlightProvider } from '../contexts/KeyboardHighlightContext';
+import { useAppSettings } from '../contexts/AppSettingsContext';
+import { useTypingSession } from '../contexts/TypingSessionContext';
 
 // Core typing game UI component that coordinates between contexts and child components
-const TouchTypistInner: React.FC = () => {
+export const TouchTypist: React.FC = () => {
   // Access settings and session state from contexts
   const { level, selectedLayout, shiftMode } = useAppSettings();
   const { wordsState, submitWord, initializeSession, currentWPM } = useTypingSession();
@@ -85,15 +84,3 @@ const TouchTypistControls: React.FC = () => {
   );
 };
 
-// Root TouchTypist component that provides all contexts to child components
-export const TouchTypist: React.FC = () => {
-  return (
-    <AppSettingsProvider>
-      <TypingSessionProvider>
-        <KeyboardHighlightProvider>
-          <TouchTypistInner />
-        </KeyboardHighlightProvider>
-      </TypingSessionProvider>
-    </AppSettingsProvider>
-  );
-};

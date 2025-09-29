@@ -4,16 +4,25 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { TouchTypist } from './components/TouchTypist';
 import { Instructions } from './components/Instructions';
 import { NotFound } from './components/NotFound';
+import { AppSettingsProvider } from './contexts/AppSettingsContext';
+import { TypingSessionProvider } from './contexts/TypingSessionContext';
+import { KeyboardHighlightProvider } from './contexts/KeyboardHighlightContext';
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<TouchTypist />} />
-        <Route path="/instructions" element={<Instructions />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <AppSettingsProvider>
+      <TypingSessionProvider>
+        <KeyboardHighlightProvider>
+          <Router>
+            <Routes>
+              <Route path="/" element={<TouchTypist />} />
+              <Route path="/instructions" element={<Instructions />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Router>
+        </KeyboardHighlightProvider>
+      </TypingSessionProvider>
+    </AppSettingsProvider>
   );
 };
 
