@@ -41,11 +41,14 @@ function extractWords(content: string): Set<string> {
 
             // Check if the word contains non-alphabetic characters
             if (/[^a-zA-Z]/.test(token)) {
-                // Remove all non-alphabetic characters
-                const stripped = token.replace(/[^a-zA-Z]/g, '');
+                // Strip non-alphabetic characters only from the beginning and end
+                const stripped = token.replace(/^[^a-zA-Z]+|[^a-zA-Z]+$/g, '');
 
-                // Only add the stripped version if it's not empty
-                if (stripped.length > 0) {
+                // Only add the stripped version if:
+                // 1. It's not empty
+                // 2. It's different from the original
+                // 3. It contains ONLY alphabetic characters (no punctuation in the middle)
+                if (stripped.length > 0 && stripped !== token && /^[a-zA-Z]+$/.test(stripped)) {
                     words.add(stripped);
                 }
             }
@@ -80,8 +83,9 @@ function main(): void {
         const content = readFileSync(inputFile, 'utf-8');
         const words = extractWords(content);
 
-        // Print each unique word
-        for (const word of words) {
+        // Sort and print each unique word
+        const sortedWords = Array.from(words).sort();
+        for (const word of sortedWords) {
             console.log(word);
         }
 
