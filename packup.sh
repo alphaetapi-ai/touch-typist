@@ -6,6 +6,6 @@ echo "Building project..."
 npm run build
 
 # Create AWS package - exclude source files, dev dependencies, and development artifacts
-zip -r aws-pack.zip . -x "*.git*" "node_modules/*" "src/*" "*.ts" "*.tsx" "tsconfig.json" "webpack.config.js" "keyboard-layouts/*" "practice-files/*"
+zip -r aws-pack.zip . -x "*.git*" "node_modules/*" "src/*" "*.ts" "*.tsx" "tsconfig.json" "webpack.config.js" "keyboard-layouts/*" "practice-files/*" "scripts/*"
 
 echo "AWS package created: aws-pack.zip"
