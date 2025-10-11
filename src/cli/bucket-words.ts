@@ -14,10 +14,11 @@ Description:
 Options:
   --layout=<name>    Keyboard layout to use (qwerty or dvorak). Default: qwerty
   --full-coverage    Add practice strings to ensure all characters at each level are covered
+  --no-shift         Exclude words with shifted punctuation and only use unshifted chars in coverage
   --help             Show this help message
 
 Example:
-  extract-words input.txt | bucket-words --layout=dvorak --full-coverage`);
+  extract-words input.txt | bucket-words --layout=dvorak --full-coverage --no-shift`);
 }
 
 interface CharToLevelMap {
@@ -45,6 +46,37 @@ function buildCharToLevelMap(layout: string[][]): CharToLevelMap {
     }
 
     return map;
+}
+
+// Build a set of all shifted punctuation characters (2nd char in non-letter keys)
+function buildShiftedPunctuationSet(layout: string[][]): Set<string> {
+    const shifted = new Set<string>();
+
+    for (const row of layout) {
+        for (const keyChars of row) {
+            if (keyChars.length >= 2) {
+                const firstChar = keyChars[0];
+                const secondChar = keyChars[1];
+
+                // Only consider it shifted punctuation if both chars are non-letters
+                if (!/[a-zA-Z]/.test(firstChar) && !/[a-zA-Z]/.test(secondChar)) {
+                    shifted.add(secondChar);
+                }
+            }
+        }
+    }
+
+    return shifted;
+}
+
+// Check if a word contains any shifted punctuation
+function containsShiftedPunctuation(word: string, shiftedPunct: Set<string>): boolean {
+    for (const char of word) {
+        if (shiftedPunct.has(char)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function validateLayout(layout: string[][], layoutName: string): void {
@@ -112,17 +144,40 @@ function repeatToLength5(pattern: string): string {
 }
 
 // Build a map from level to all characters at that level (lowercase)
-function buildLevelToCharsMap(charToLevel: CharToLevelMap): Map<number, Set<string>> {
+// If noShift is true, only include the first character from each key
+function buildLevelToCharsMap(charToLevel: CharToLevelMap, layout: string[][], noShift: boolean): Map<number, Set<string>> {
     const levelToChars = new Map<number, Set<string>>();
 
-    for (const char in charToLevel) {
-        const level = charToLevel[char];
-        const lowerChar = char.toLowerCase();
+    if (noShift) {
+        // Only include first character from each key
+        for (let rowIndex = 0; rowIndex < layout.length; rowIndex++) {
+            const row = layout[rowIndex];
+            const levelRow = keyLevels[rowIndex];
 
-        if (!levelToChars.has(level)) {
-            levelToChars.set(level, new Set<string>());
+            for (let colIndex = 0; colIndex < row.length; colIndex++) {
+                const keyChars = row[colIndex];
+                const level = levelRow[colIndex];
+
+                if (keyChars.length > 0 && keyChars[0] !== ' ') {
+                    const firstChar = keyChars[0].toLowerCase();
+                    if (!levelToChars.has(level)) {
+                        levelToChars.set(level, new Set<string>());
+                    }
+                    levelToChars.get(level)!.add(firstChar);
+                }
+            }
         }
-        levelToChars.get(level)!.add(lowerChar);
+    } else {
+        // Include all characters
+        for (const char in charToLevel) {
+            const level = charToLevel[char];
+            const lowerChar = char.toLowerCase();
+
+            if (!levelToChars.has(level)) {
+                levelToChars.set(level, new Set<string>());
+            }
+            levelToChars.get(level)!.add(lowerChar);
+        }
     }
 
     return levelToChars;
@@ -174,11 +229,14 @@ async function main(): Promise<void> {
     // Parse options
     let layoutName = 'qwerty';
     let fullCoverage = false;
+    let noShift = false;
     for (const arg of args) {
         if (arg.startsWith('--layout=')) {
             layoutName = arg.substring('--layout='.length).toLowerCase();
         } else if (arg === '--full-coverage') {
             fullCoverage = true;
+        } else if (arg === '--no-shift') {
+            noShift = true;
         }
     }
 
@@ -199,8 +257,11 @@ async function main(): Promise<void> {
     // Build character to level mapping
     const charToLevel = buildCharToLevelMap(layout);
 
+    // Build shifted punctuation set (for --no-shift filtering)
+    const shiftedPunct = buildShiftedPunctuationSet(layout);
+
     // Build level to characters mapping (for full coverage)
-    const levelToChars = buildLevelToCharsMap(charToLevel);
+    const levelToChars = buildLevelToCharsMap(charToLevel, layout, noShift);
 
     // Initialize buckets for levels 1-24 (index 0 = level 1, index 23 = level 24)
     const buckets: Set<string>[] = [];
@@ -225,6 +286,19 @@ async function main(): Promise<void> {
         // Store in bucket at index (level - 1) since we're only storing levels 1-24
         if (maxLevel >= 1 && maxLevel <= 24) {
             buckets[maxLevel - 1].add(word);
+        }
+    }
+
+    // Filter out words with shifted punctuation if --no-shift is enabled
+    if (noShift) {
+        for (let i = 0; i < buckets.length; i++) {
+            const filtered = new Set<string>();
+            for (const word of buckets[i]) {
+                if (!containsShiftedPunctuation(word, shiftedPunct)) {
+                    filtered.add(word);
+                }
+            }
+            buckets[i] = filtered;
         }
     }
 
