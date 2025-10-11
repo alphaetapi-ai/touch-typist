@@ -10,8 +10,9 @@
     "bucket-words": "./dist/cli/bucket-words.js"
   },
   "scripts": {
-    "build": "tsc && chmod +x dist/cli/*.js && webpack --mode production && cp -r src/public/* dist/public/",
-    "build:server": "tsc && chmod +x dist/cli/*.js",
+    "build": "npm run generate-words && tsc && chmod +x dist/cli/*.js && webpack --mode production && cp -r src/public/* dist/public/",
+    "build:server": "npm run generate-words && tsc && chmod +x dist/cli/*.js",
+    "generate-words": "tsc && chmod +x dist/cli/*.js && node scripts/generate-word-lists.js",
     "build:client": "webpack --mode production",
     "build:dev": "webpack --mode development",
     "start": "node dist/server.js",
