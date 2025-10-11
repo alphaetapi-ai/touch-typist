@@ -128,7 +128,7 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
     remainder: "",
     pending: []
   });
-  const [speed, setSpeed] = useState<number>(10);
+  const [speed, setSpeed] = useState<number>(2); // seconds per character
   const wordStartTime = useRef<number>(Date.now());
 
   // Generate random words based on current level and keyboard layout
@@ -226,16 +226,20 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
 
   // Process submitted word, update speed, and advance to next word
   const submitWord = useCallback((typedWord: string): boolean => {
-    // Calculate time for this word and update speed
+    // Calculate time for this word and update speed (character-based)
     const wordTime = (Date.now() - wordStartTime.current) / 1000; // Convert to seconds
     const cappedWordTime = Math.min(wordTime, 10); // Cap at 10 seconds
-    const newSpeed = speed * 0.9 + cappedWordTime * 0.1;
+    const characterCount = wordsState.current.length;
+
+    // Calculate speed as seconds per character
+    const timePerChar = cappedWordTime / characterCount;
+    const newSpeed = speed * 0.9 + timePerChar * 0.1;
     setSpeed(newSpeed);
 
-    // Check for level progression
-    if (newSpeed < 5 && level < 25) {
+    // Check for level progression (1 second per character = 60 CPM = 12 WPM)
+    if (newSpeed < 1 && level < 25) {
       setLevel(level + 1); // This will trigger useEffect in consuming components
-      setSpeed(10); // Reset speed to 10 seconds
+      setSpeed(2); // Reset speed to 2 seconds per character
     }
 
     // Dispatch the word submission - reducer handles all the state logic
@@ -259,13 +263,14 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
 
   // Start over with a completely fresh typing session
   const resetSession = useCallback((): void => {
-    setSpeed(10);
+    setSpeed(2); // Reset to 2 seconds per character
     dispatch({ type: 'RESET_SESSION' });
     initializeSession();
   }, [initializeSession]);
 
-  // Computed values
-  const currentWPM = 60 / speed;
+  // Computed values - using standard WPM formula (CPM / 5)
+  // speed is in seconds per character, so CPM = 60 / speed, and WPM = CPM / 5
+  const currentWPM = (60 / speed) / 5;
 
   const contextValue: TypingSessionContextType = {
     // State
