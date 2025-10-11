@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useReducer, useRef, useCallback, ReactNode } from 'react';
 import { getKeyboardLayout, getDefaultKeyboardLayout, keyLevels } from '../utils/keyboardLayouts';
 import { useAppSettings } from './AppSettingsContext';
+import { useWordCache } from './WordCacheContext';
 
 // Types for the typing session
 export interface WordsState {
@@ -120,6 +121,7 @@ interface TypingSessionProviderProps {
 export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ children }) => {
   // Get app settings from context
   const { level, selectedLayout, shiftMode, setLevel } = useAppSettings();
+  const { getWordsForLevel } = useWordCache();
 
   // Session state using useReducer for complex words state
   const [wordsState, dispatch] = useReducer(wordsReducer, {
@@ -199,13 +201,71 @@ export const TypingSessionProvider: React.FC<TypingSessionProviderProps> = ({ ch
     return word;
   }, [selectedLayout, shiftMode]); // Intentionally excludes level - automatic level progression shouldn't regenerate words
 
+  // Get a random word from cache or fallback to random generation
+  const getWord = useCallback((currentLevel: number, layoutName: string): string => {
+    console.log(`[getWord] Requesting word for level ${currentLevel}, layout ${layoutName}, shift ${shiftMode}`);
+
+    // Special handling for level 25: pick from all levels 1-24
+    if (currentLevel === 25) {
+      // Try to get words from cache for all levels
+      const allLevelWords: Array<{ level: number; words: string[] }> = [];
+      for (let lvl = 1; lvl <= 24; lvl++) {
+        const cachedWords = getWordsForLevel(lvl, layoutName, shiftMode);
+        if (cachedWords && cachedWords.length > 0) {
+          allLevelWords.push({ level: lvl, words: cachedWords });
+        }
+      }
+
+      if (allLevelWords.length > 0) {
+        // Calculate total word count across all levels
+        const totalWords = allLevelWords.reduce((sum, item) => sum + item.words.length, 0);
+
+        // Pick a random word proportional to level word counts
+        const randomIndex = Math.floor(Math.random() * totalWords);
+        let currentIndex = 0;
+
+        for (const item of allLevelWords) {
+          if (randomIndex < currentIndex + item.words.length) {
+            const wordIndex = randomIndex - currentIndex;
+            return item.words[wordIndex];
+          }
+          currentIndex += item.words.length;
+        }
+      }
+
+      // Fallback to random generation if cache not ready
+      return generateRandomWord(currentLevel, layoutName);
+    }
+
+    // For levels 1-24: try cache first, fallback to random
+    const cachedWords = getWordsForLevel(currentLevel, layoutName, shiftMode);
+    console.log(`[getWord] Cache lookup for level ${currentLevel}:`, cachedWords ? `${cachedWords.length} words` : 'null');
+
+    if (cachedWords && cachedWords.length > 0) {
+      const randomIndex = Math.floor(Math.random() * cachedWords.length);
+      const word = cachedWords[randomIndex];
+      console.log(`[getWord] Using cached word: "${word}"`);
+      return word;
+    }
+
+    // Fallback to random generation
+    console.log(`[getWord] Cache miss, using random generation`);
+    return generateRandomWord(currentLevel, layoutName);
+  }, [getWordsForLevel, shiftMode, generateRandomWord]);
+
   const generatePhrase = useCallback((currentLevel: number = level, layoutName: string = selectedLayout): string => {
     const words: string[] = [];
-    for (let i = 0; i < 5; i++) {
-      words.push(generateRandomWord(currentLevel, layoutName));
+    let totalChars = 0;
+
+    // Generate words until we have at least 25 characters (excluding spaces)
+    while (totalChars < 25) {
+      const word = getWord(currentLevel, layoutName);
+      words.push(word);
+      totalChars += word.length;
     }
+
     return words.join(' ');
-  }, [generateRandomWord, selectedLayout]); // Intentionally excludes level - prevents regeneration on automatic progression
+  }, [getWord, selectedLayout]); // Intentionally excludes level - prevents regeneration on automatic progression
 
   // Set up a new typing session with fresh word content
   const initializeSession = useCallback((overrideLevel?: number): void => {

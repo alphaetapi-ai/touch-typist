@@ -5,23 +5,26 @@ import { TouchTypist } from './components/TouchTypist';
 import { Instructions } from './components/Instructions';
 import { NotFound } from './components/NotFound';
 import { AppSettingsProvider } from './contexts/AppSettingsContext';
+import { WordCacheProvider } from './contexts/WordCacheContext';
 import { TypingSessionProvider } from './contexts/TypingSessionContext';
 import { KeyboardHighlightProvider } from './contexts/KeyboardHighlightContext';
 
 const App: React.FC = () => {
   return (
     <AppSettingsProvider>
-      <TypingSessionProvider>
-        <KeyboardHighlightProvider>
-          <Router>
-            <Routes>
-              <Route path="/" element={<TouchTypist />} />
-              <Route path="/instructions" element={<Instructions />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Router>
-        </KeyboardHighlightProvider>
-      </TypingSessionProvider>
+      <WordCacheProvider>
+        <TypingSessionProvider>
+          <KeyboardHighlightProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<TouchTypist />} />
+                <Route path="/instructions" element={<Instructions />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
+          </KeyboardHighlightProvider>
+        </TypingSessionProvider>
+      </WordCacheProvider>
     </AppSettingsProvider>
   );
 };
